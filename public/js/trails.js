@@ -165,3 +165,18 @@ function drawTaperedTrail(points, color, baseSize, baseOpacity, now) {
   }
   ctx.globalAlpha = 1.0; // Reset
 }
+
+export function updateTrailColor(id, color) {
+  const trail = activeTrails.get(id);
+  if (trail) {
+    trail.color = color;
+  }
+}
+
+export function triggerDrawingLoop() {
+  if (!isDrawingLoopRunning) {
+    isDrawingLoopRunning = true;
+    requestAnimationFrame(drawTrails);
+  }
+}
+

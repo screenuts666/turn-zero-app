@@ -1,8 +1,8 @@
 import { settings, applySettingsToUI, initSettingsListeners } from './js/settings.js';
 import { playSound, triggerVibration, unlockAudio } from './js/audio.js';
 import { getSecureRandomIndex, populateMathContent } from './js/random.js';
-import { clearParticles } from './js/particles.js';
-import { addTrail, updateTrail, deactivateTrail, clearTrails } from './js/trails.js';
+import { clearParticles, particles, Particle } from './js/particles.js';
+import { addTrail, updateTrail, deactivateTrail, clearTrails, triggerDrawingLoop, updateTrailColor } from './js/trails.js';
 
 // GLOBAL VARIABLES & PALETTE
 const colors = [
@@ -21,6 +21,28 @@ let state = "WAITING";
 let countdownInterval;
 let timeLeft = settings.countdown;
 let isGameActive = false;
+let gameMode = "classic";
+
+function secureShuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = getSecureRandomIndex(i + 1);
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+  return array;
+}
+
+function triggerExplosion(x, y, color) {
+  for (let p = 0; p < 35; p++) {
+    const angle = (p / 35) * Math.PI * 2 + (Math.random() - 0.5) * 0.15;
+    const speed = Math.random() * 5 + 4; // speed in pixels per frame
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed;
+    particles.push(new Particle(x, y, color, vx, vy, true));
+  }
+  triggerDrawingLoop();
+}
 
 // DOM Selectors
 const msg = document.getElementById("message");
@@ -218,35 +240,120 @@ function checkState() {
   }
 }
 
-// WINNER SELECTION
+// WINNER SELECTION & EXPLOSIONS
 function startSelection() {
   state = "ANIMATING";
   msg.innerText = "Selecting...";
   updateHomeButtonVisibility();
 
-  let fingerArray = Array.from(document.querySelectorAll(".finger"));
+  const fingerArray = Array.from(fingers.values());
   fingerArray.forEach((el) => el.classList.add("pulsing"));
 
   setTimeout(() => {
     state = "DONE";
-    const winnerIndex = getSecureRandomIndex(fingerArray.length);
 
-    fingerArray.forEach((el, index) => {
-      el.classList.remove("pulsing");
-      if (index === winnerIndex) {
-        el.classList.add("winner");
-        msg.innerText = "YOU GO FIRST!";
-        playSound("win");
-        triggerVibration([300, 100, 300]);
+    if (gameMode === "classic") {
+      const winnerTouchId = Array.from(fingers.keys())[getSecureRandomIndex(fingers.size)];
+      const winnerFinger = fingers.get(winnerTouchId);
 
-        // Show restart and math flex buttons
-        restartBtn.style.display = "inline-flex";
-        if (mathBtn) mathBtn.style.display = "block";
-      } else {
-        el.style.opacity = "0";
-        setTimeout(() => el.remove(), 500);
-      }
-    });
+      fingers.forEach((el, id) => {
+        el.classList.remove("pulsing");
+        if (id === winnerTouchId) {
+          el.classList.add("winner");
+          msg.innerText = "YOU GO FIRST!";
+          playSound("win");
+          triggerVibration([300, 100, 300]);
+
+          // Trigger particle explosion!
+          const x = parseFloat(el.style.left);
+          const y = parseFloat(el.style.top);
+          const color = el.style.backgroundColor;
+          triggerExplosion(x, y, color);
+
+          // Show restart and math flex buttons
+          restartBtn.style.display = "inline-flex";
+          if (mathBtn) mathBtn.style.display = "block";
+        } else {
+          el.style.opacity = "0";
+          setTimeout(() => el.remove(), 500);
+        }
+      });
+
+    } else if (gameMode === "teams") {
+      // Split into 2 teams: Cyan (#00E5FF) and Magenta (#FF007F)
+      const touchIds = Array.from(fingers.keys());
+      secureShuffle(touchIds);
+
+      const half = Math.ceil(touchIds.length / 2);
+      const teamA = touchIds.slice(0, half);
+      const teamB = touchIds.slice(half);
+
+      teamA.forEach((id) => {
+        const el = fingers.get(id);
+        el.classList.remove("pulsing");
+        el.style.backgroundColor = "#00E5FF";
+        el.style.color = "#00E5FF";
+        el.style.borderColor = "#00E5FF";
+        el.innerText = "A";
+
+        // Update corresponding trail color!
+        updateTrailColor(id, "#00E5FF");
+
+        // Spawn team explosion
+        const x = parseFloat(el.style.left);
+        const y = parseFloat(el.style.top);
+        triggerExplosion(x, y, "#00E5FF");
+      });
+
+      teamB.forEach((id) => {
+        const el = fingers.get(id);
+        el.classList.remove("pulsing");
+        el.style.backgroundColor = "#FF007F";
+        el.style.color = "#FF007F";
+        el.style.borderColor = "#FF007F";
+        el.innerText = "B";
+
+        // Update corresponding trail color!
+        updateTrailColor(id, "#FF007F");
+
+        // Spawn team explosion
+        const x = parseFloat(el.style.left);
+        const y = parseFloat(el.style.top);
+        triggerExplosion(x, y, "#FF007F");
+      });
+
+      msg.innerText = "TEAMS ASSIGNED!";
+      playSound("win");
+      triggerVibration([300, 100, 300]);
+
+      restartBtn.style.display = "inline-flex";
+      if (mathBtn) mathBtn.style.display = "block";
+
+    } else if (gameMode === "order") {
+      // Assign playing order
+      const touchIds = Array.from(fingers.keys());
+      secureShuffle(touchIds);
+
+      touchIds.forEach((id, idx) => {
+        const el = fingers.get(id);
+        el.classList.remove("pulsing");
+        el.innerText = idx + 1;
+
+        // Spawn order explosion
+        const x = parseFloat(el.style.left);
+        const y = parseFloat(el.style.top);
+        const color = el.style.backgroundColor;
+        triggerExplosion(x, y, color);
+      });
+
+      msg.innerText = "ORDER DECIDED!";
+      playSound("win");
+      triggerVibration([300, 100, 300]);
+
+      restartBtn.style.display = "inline-flex";
+      if (mathBtn) mathBtn.style.display = "block";
+    }
+
     updateHomeButtonVisibility();
   }, 2000);
 }
@@ -361,3 +468,26 @@ if (settingsBtn && settingsModal && closeSettingsBtn) {
     { passive: false },
   );
 }
+
+// MODE SELECTOR BUTTONS BINDINGS
+const modeButtons = document.querySelectorAll(".mode-btn");
+modeButtons.forEach((btn) => {
+  btn.addEventListener(
+    "touchstart",
+    (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      // Update active state class
+      modeButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      // Set the game mode
+      gameMode = btn.getAttribute("data-mode");
+
+      // Trigger a small tactile feedback
+      triggerVibration(30);
+    },
+    { passive: false },
+  );
+});
