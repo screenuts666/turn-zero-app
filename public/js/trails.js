@@ -126,42 +126,32 @@ export function drawTrails() {
 function drawTaperedTrail(points, color, baseSize, baseOpacity, now) {
   if (points.length < 2) return;
 
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
   for (let i = 1; i < points.length; i++) {
     const p1 = points[i - 1];
     const p2 = points[i];
 
-    const dx = p2.x - p1.x;
-    const dy = p2.y - p1.y;
-    const dist = Math.hypot(dx, dy);
+    const age = now - p2.time;
+    const lifeRatio = 1 - (age / trailDuration);
+    if (lifeRatio <= 0) continue;
 
-    // Interpolate points every 2 pixels to keep the trail smooth
-    const steps = Math.max(1, Math.ceil(dist / 2));
-    const age1 = now - p1.time;
-    const age2 = now - p2.time;
+    // Position ratio (0 at oldest point/tail, 1 at newest point/head)
+    const positionRatio = i / (points.length - 1);
 
-    for (let s = 0; s <= steps; s++) {
-      const t = s / steps;
-      const x = p1.x + dx * t;
-      const y = p1.y + dy * t;
+    const size = baseSize * positionRatio * lifeRatio;
+    const opacity = baseOpacity * positionRatio * lifeRatio;
 
-      const age = age1 + (age2 - age1) * t;
-      const lifeRatio = 1 - (age / trailDuration);
-      if (lifeRatio <= 0) continue;
+    if (size <= 0.1 || opacity <= 0.01) continue;
 
-      // Position ratio (0 at oldest point/tail, 1 at newest point/head)
-      const positionRatio = ((i - 1) + t) / (points.length - 1);
-
-      const size = baseSize * positionRatio * lifeRatio;
-      const opacity = baseOpacity * positionRatio * lifeRatio;
-
-      if (size <= 0.1 || opacity <= 0.01) continue;
-
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.globalAlpha = opacity;
-      ctx.fill();
-    }
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.lineWidth = size * 2;
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = opacity;
+    ctx.stroke();
   }
   ctx.globalAlpha = 1.0; // Reset
 }
