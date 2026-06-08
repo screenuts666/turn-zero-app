@@ -24,59 +24,100 @@ export function populateMathContent() {
   if (!mathContent) return;
 
   if (lastMathLog.mode === "classic" || !lastMathLog.mode) {
+    let segmentsHtml = "";
+    const selectedIndex = lastMathLog.index;
+    const maxPlayers = lastMathLog.max || 1;
+    const segmentWidth = (100 / maxPlayers).toFixed(1);
+    
+    for (let i = 0; i < maxPlayers; i++) {
+      const isSelected = i === selectedIndex;
+      segmentsHtml += `
+        <div class="entropy-segment ${isSelected ? 'selected' : ''}" style="width: ${segmentWidth}%;">
+          P${i + 1}
+        </div>
+      `;
+    }
+
     mathContent.innerHTML = `
       > FETCHING HARDWARE NOISE...<br>
-      > Uint32Array generated:<br>
-      > [<span class="highlight">${lastMathLog.raw}</span>]<br>
-      <br>
-      > NORMALIZING FLOAT:<br>
+      > Uint32 generated: <span class="highlight">${lastMathLog.raw}</span><br>
+      > Normalizing to Float (0.0 to 1.0):<br>
       > ${lastMathLog.raw} / ${lastMathLog.maxUint32}<br>
-      > = <span class="highlight">${lastMathLog.float.toFixed(8)}...</span><br>
+      > = <span class="highlight">${lastMathLog.float.toFixed(8)}</span><br>
       <br>
-      > MULTIPLYING BY PLAYERS (${lastMathLog.max}):<br>
-      > Result: ${(lastMathLog.float * lastMathLog.max).toFixed(6)}<br>
-      <br>
-      > FLOORING VALUE:<br>
+      > SECURE SELECTION MAP:<br>
+      <div class="entropy-graphic">
+        <div class="entropy-bar-container">
+          <div class="entropy-pointer" style="left: ${lastMathLog.float * 100}%;">▼</div>
+          <div class="entropy-bar">
+            ${segmentsHtml}
+          </div>
+        </div>
+        <div class="entropy-legend">
+          <span>0.0</span>
+          <span>Float: ${lastMathLog.float.toFixed(4)}</span>
+          <span>1.0</span>
+        </div>
+      </div>
+      > Float landed in segment P${selectedIndex + 1}<br>
       > WINNER INDEX = <span class="highlight">${lastMathLog.index}</span><br>
       <br>
       > STATUS: <span style="color:#34C759">CRYPTOGRAPHICALLY FAIR</span>
     `;
   } else if (lastMathLog.mode === "teams") {
-    let teamsHtml = "";
-    Object.keys(lastMathLog.teamsGroups || {}).forEach(label => {
+    const teamColors = ["#00E5FF", "#FF007F", "#FFEA00", "#BD00FF"];
+    let boxesHtml = "";
+    
+    Object.keys(lastMathLog.teamsGroups || {}).forEach((label, idx) => {
+      const color = teamColors[idx] || "#ffffff";
       const players = lastMathLog.teamsGroups[label];
-      teamsHtml += `  Team ${label}: ${players.join(", ")}<br>`;
+      boxesHtml += `
+        <div class="team-box-visual" style="--team-color: ${color};">
+          <div class="team-box-visual-title">TEAM ${label}</div>
+          <div class="team-box-visual-members">${players.join("<br>")}</div>
+        </div>
+      `;
     });
 
     mathContent.innerHTML = `
-      > FISHER-YATES SHUFFLE...<br>
-      > Hardware-generated shuffles<br>
-      > executed securely.<br>
+      > SECURE FISHER-YATES SHUFFLE...<br>
+      > Players randomized securely with<br>
+      > cryptographically fair entropy.<br>
       <br>
-      > SPLITTING INTO ${lastMathLog.numTeams} TEAMS:<br>
-      <span class="highlight">${teamsHtml}</span>
+      > TEAM DISTRIBUTION MAP:<br>
+      <div class="teams-visual-distribution">
+        ${boxesHtml}
+      </div>
       <br>
       > STATUS: <span style="color:#34C759">TEAMS BALANCED</span>
     `;
   } else if (lastMathLog.mode === "order") {
-    let orderHtml = "";
+    let stepsHtml = "";
     (lastMathLog.shuffledOrder || []).forEach((player, idx) => {
       let suffix = "th";
       if (idx === 0) suffix = "st";
       else if (idx === 1) suffix = "nd";
       else if (idx === 2) suffix = "rd";
-      orderHtml += `  ${idx + 1}${suffix}: ${player}<br>`;
+      
+      stepsHtml += `
+        <div class="order-step-visual">
+          <span class="order-step-badge">${idx + 1}${suffix}</span>
+          <span class="order-step-player">${player}</span>
+        </div>
+      `;
     });
 
     mathContent.innerHTML = `
-      > FISHER-YATES SHUFFLE...<br>
-      > Swapping players sequentially<br>
-      > with Uint32 hardware entropy.<br>
+      > SECURE FISHER-YATES SHUFFLE...<br>
+      > Turn sequence randomized with<br>
+      > hardware-generated entropy.<br>
       <br>
-      > PLAYING ORDER:<br>
-      <span class="highlight">${orderHtml}</span>
+      > PLAYING SEQUENCE TIMELINE:<br>
+      <div class="order-visual-sequence">
+        ${stepsHtml}
+      </div>
       <br>
-      > STATUS: <span style="color:#34C759">ORDER COMPLETED</span>
+      > STATUS: <span style="color:#34C759">ORDER DECIDED</span>
     `;
   }
 }
