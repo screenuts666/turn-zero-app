@@ -191,3 +191,45 @@
   font-weight: 700;
 }
 #close-math-btn:active { background: #4B5563; }
+
+/* =========================================
+   Mode Selector Styling (Premium & Minimal)
+   ========================================= */
+.mode-selector {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 30px;
+  padding: 4px;
+  display: inline-flex;
+  gap: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.mode-btn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  padding: 10px 22px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mode-btn.active {
+  background: #ffffff;
+  color: #0d0e12;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+}
+
+.mode-btn:active:not(.active) {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+

@@ -1,15 +1,22 @@
 export const particles = [];
 
 export class Particle {
-  constructor(x, y, color, vx, vy) {
+  constructor(x, y, color, vx = 0, vy = 0, isExplosion = false) {
     this.x = x;
     this.y = y;
     this.color = color;
-    // Particles inherit a bit of finger speed, moving opposite to finger + random spread
-    this.vx = vx * 0.15 + (Math.random() - 0.5) * 2.0;
-    this.vy = vy * 0.15 + (Math.random() - 0.5) * 2.0;
-    this.size = Math.random() * 6 + 2; // size from 2px to 8px
-    this.maxLife = Math.random() * 400 + 200; // life between 200ms and 600ms
+    if (isExplosion) {
+      this.vx = vx;
+      this.vy = vy;
+      this.size = Math.random() * 8 + 3; // slightly larger for explosion
+      this.maxLife = Math.random() * 600 + 400; // longer life
+    } else {
+      // Particles inherit a bit of finger speed, moving opposite to finger + random spread
+      this.vx = vx * 0.15 + (Math.random() - 0.5) * 2.0;
+      this.vy = vy * 0.15 + (Math.random() - 0.5) * 2.0;
+      this.size = Math.random() * 6 + 2; // size from 2px to 8px
+      this.maxLife = Math.random() * 400 + 200; // life between 200ms and 600ms
+    }
     this.life = this.maxLife;
   }
 
