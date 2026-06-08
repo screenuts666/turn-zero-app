@@ -341,3 +341,134 @@
   color: #ffffff;
 }
 
+/* =========================================
+   Entropy Graphical Layouts
+   ========================================= */
+.entropy-graphic {
+  margin: 15px 0;
+  width: 100%;
+}
+
+.entropy-bar-container {
+  position: relative;
+  width: 100%;
+  padding-top: 15px; /* space for pointer */
+  margin-bottom: 5px;
+}
+
+.entropy-pointer {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: #00E5FF;
+  text-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
+  transition: left 0.5s ease-out;
+}
+
+.entropy-bar {
+  display: flex;
+  height: 25px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.entropy-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #6b7280;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s;
+}
+
+.entropy-segment:last-child {
+  border-right: none;
+}
+
+.entropy-segment.selected {
+  background: rgba(0, 229, 255, 0.15);
+  color: #00E5FF;
+  text-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
+  border-color: rgba(0, 229, 255, 0.3);
+}
+
+.entropy-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #6b7280;
+  padding: 0 2px;
+}
+
+/* Teams Visual Distribution */
+.teams-visual-distribution {
+  display: flex;
+  gap: 8px;
+  margin: 15px 0;
+  width: 100%;
+}
+
+.team-box-visual {
+  flex: 1;
+  border-radius: 8px;
+  padding: 10px 5px;
+  text-align: center;
+  border: 1px solid var(--team-color);
+  background: rgba(255, 255, 255, 0.01);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.team-box-visual-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: var(--team-color);
+  text-shadow: 0 0 5px var(--team-color);
+}
+
+.team-box-visual-members {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Order Visual Sequence */
+.order-visual-sequence {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 15px 0;
+  width: 100%;
+}
+
+.order-step-visual {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 8px 12px;
+  gap: 10px;
+}
+
+.order-step-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #9CA3AF;
+}
+
+.order-step-player {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
