@@ -1,5 +1,11 @@
 import { triggerVibration } from './audio.js';
 
+export const SettingsKeys = {
+  SOUND: "tr_settings_sound",
+  VIBRATION: "tr_settings_vibration",
+  COUNTDOWN: "tr_settings_countdown"
+};
+
 export const settings = {
   sound: true,
   vibration: true,
@@ -7,9 +13,9 @@ export const settings = {
 };
 
 export function loadSettings() {
-  const savedSound = localStorage.getItem("tr_settings_sound");
-  const savedVibe = localStorage.getItem("tr_settings_vibration");
-  const savedCountdown = localStorage.getItem("tr_settings_countdown");
+  const savedSound = localStorage.getItem(SettingsKeys.SOUND);
+  const savedVibe = localStorage.getItem(SettingsKeys.VIBRATION);
+  const savedCountdown = localStorage.getItem(SettingsKeys.COUNTDOWN);
   
   if (savedSound !== null) settings.sound = savedSound === "true";
   if (savedVibe !== null) settings.vibration = savedVibe === "true";
@@ -17,9 +23,9 @@ export function loadSettings() {
 }
 
 export function saveSettings() {
-  localStorage.setItem("tr_settings_sound", settings.sound);
-  localStorage.setItem("tr_settings_vibration", settings.vibration);
-  localStorage.setItem("tr_settings_countdown", settings.countdown);
+  localStorage.setItem(SettingsKeys.SOUND, settings.sound);
+  localStorage.setItem(SettingsKeys.VIBRATION, settings.vibration);
+  localStorage.setItem(SettingsKeys.COUNTDOWN, settings.countdown);
 }
 
 export function applySettingsToUI() {
