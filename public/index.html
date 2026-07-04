@@ -12,6 +12,36 @@
 
     <link rel="manifest" href="manifest.json" />
 
+    <script>
+      window.deferredPwaPrompt = null;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        window.deferredPwaPrompt = e;
+        const pwaBtn = document.getElementById('pwa-install-container');
+        if (pwaBtn) pwaBtn.style.display = 'flex';
+      });
+      window.addEventListener('DOMContentLoaded', () => {
+        if (window.deferredPwaPrompt) {
+          const pwaBtn = document.getElementById('pwa-install-container');
+          if (pwaBtn) pwaBtn.style.display = 'flex';
+        }
+        
+        const installBtn = document.getElementById('pwa-install-btn');
+        if (installBtn) {
+          installBtn.addEventListener('click', async () => {
+            if (window.deferredPwaPrompt) {
+              window.deferredPwaPrompt.prompt();
+              const { outcome } = await window.deferredPwaPrompt.userChoice;
+              if (outcome === 'accepted') {
+                document.getElementById('pwa-install-container').style.display = 'none';
+              }
+              window.deferredPwaPrompt = null;
+            }
+          });
+        }
+      });
+    </script>
+
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"

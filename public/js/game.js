@@ -16,42 +16,6 @@ import {
 } from "./trails.js";
 
 // ----------------------------------------------------
-// PWA INSTALLATION
-// ----------------------------------------------------
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent the mini-infobar from appearing on mobile
-  e.preventDefault();
-  // Stash the event so it can be triggered later.
-  deferredPrompt = e;
-  // Update UI notify the user they can install the PWA
-  const pwaInstallContainer = document.getElementById('pwa-install-container');
-  if (pwaInstallContainer) {
-    pwaInstallContainer.style.display = 'flex';
-  }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  const pwaInstallBtn = document.getElementById('pwa-install-btn');
-  const pwaInstallContainer = document.getElementById('pwa-install-container');
-  if (pwaInstallBtn) {
-    pwaInstallBtn.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        // Show the install prompt
-        deferredPrompt.prompt();
-        // Wait for the user to respond to the prompt
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          console.log('User accepted the install prompt');
-          if (pwaInstallContainer) pwaInstallContainer.style.display = 'none';
-        }
-        deferredPrompt = null;
-      }
-    });
-  }
-});
-
-// ----------------------------------------------------
 // ENUMS
 // ----------------------------------------------------
 export const GameState = {
@@ -95,6 +59,7 @@ let countdownInterval;
 let timeLeft = settings.countdown;
 let isGameActive = false;
 let gameMode = GameMode.CLASSIC;
+window.isIntroAnimating = true;
 
 // ----------------------------------------------------
 // DOM Selectors
@@ -126,6 +91,8 @@ function addTapListener(element, callback) {
   if (!element) return;
   let triggered = false;
   const handler = (e) => {
+    if (window.isIntroAnimating && element.id !== 'intro-blocker') return;
+    
     e.stopPropagation();
     e.preventDefault();
     if (e.type === "touchstart") {
@@ -464,6 +431,20 @@ function handleTouchEnd(e) {
 // BOOTSTRAP / INITIALIZATION
 // ----------------------------------------------------
 export function initGame() {
+  // Intro skipping logic
+  const skipIntro = () => {
+    if (window.isIntroAnimating) {
+      window.isIntroAnimating = false;
+      const startScreen = document.getElementById("start-screen");
+      if (startScreen) startScreen.classList.add("skip-intro");
+    }
+  };
+  document.addEventListener("touchstart", skipIntro, { passive: true });
+  document.addEventListener("click", skipIntro);
+  
+  // Auto-finish intro animation after 3.5s
+  setTimeout(() => { window.isIntroAnimating = false; }, 3500);
+
   // Bind DOM References
   initDOMRefs();
 
@@ -520,7 +501,8 @@ export function initGame() {
     // Small confirmation vibration
     triggerVibration(50);
 
-    // Visually start the game
+    // Visually start the game and permanently skip intro for future visits
+    startScreen.classList.add("skip-intro");
     startScreen.style.opacity = "0";
     setTimeout(() => {
       startScreen.style.display = "none";
@@ -551,6 +533,8 @@ export function initGame() {
       isGameActive = false;
       resetGame();
 
+      // Ensure intro doesn't replay
+      startScreen.classList.add("skip-intro");
       startScreen.style.display = "flex";
       setTimeout(() => {
         startScreen.style.opacity = "1";

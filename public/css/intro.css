@@ -111,3 +111,31 @@
   20% { opacity: 0.4; }
   100% { opacity: 0; transform: scale(1.5); stroke-width: 1; stroke: #ffffff; }
 }
+
+/* =========================================
+   SKIP INTRO OVERRIDES
+   ========================================= */
+.skip-intro .intro-text,
+.skip-intro .intro-fade,
+.skip-intro .intro-logo-rect {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  stroke-dashoffset: 0 !important;
+  stroke: #374151 !important;
+}
+
+.skip-intro .intro-logo-dot {
+  animation: continuousPulse 3s ease-in-out infinite !important;
+  opacity: 1 !important;
+}
+
+.skip-intro .intro-logo-wave1 {
+  animation: continuousWave 4s cubic-bezier(0.2, 0.8, 0.2, 1) infinite !important;
+  opacity: 0 !important;
+}
+
+.skip-intro .intro-logo-wave2 {
+  animation: continuousWave 4s cubic-bezier(0.2, 0.8, 0.2, 1) 1s infinite !important;
+  opacity: 0 !important;
+}
