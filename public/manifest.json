@@ -1,8 +1,8 @@
 {
-  "name": "TapRouletteApp",
-  "short_name": "TapRouletteApp",
+  "name": "TurnZero",
+  "short_name": "TurnZero",
   "display": "fullscreen",
   "orientation": "portrait",
-  "background_color": "#1a1a1a",
-  "theme_color": "#1a1a1a"
+  "background_color": "#0d0e12",
+  "theme_color": "#0d0e12"
 }

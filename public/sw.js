@@ -1,4 +1,4 @@
-const CACHE_NAME = "tap-roulette-cache-v2";
+const CACHE_NAME = "turn-zero-cache-v2";
 const ASSETS = [
   "./",
   "./index.html",
