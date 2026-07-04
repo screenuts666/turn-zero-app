@@ -16,6 +16,42 @@ import {
 } from "./trails.js";
 
 // ----------------------------------------------------
+// PWA INSTALLATION
+// ----------------------------------------------------
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent the mini-infobar from appearing on mobile
+  e.preventDefault();
+  // Stash the event so it can be triggered later.
+  deferredPrompt = e;
+  // Update UI notify the user they can install the PWA
+  const pwaInstallContainer = document.getElementById('pwa-install-container');
+  if (pwaInstallContainer) {
+    pwaInstallContainer.style.display = 'flex';
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const pwaInstallBtn = document.getElementById('pwa-install-btn');
+  const pwaInstallContainer = document.getElementById('pwa-install-container');
+  if (pwaInstallBtn) {
+    pwaInstallBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+          if (pwaInstallContainer) pwaInstallContainer.style.display = 'none';
+        }
+        deferredPrompt = null;
+      }
+    });
+  }
+});
+
+// ----------------------------------------------------
 // ENUMS
 // ----------------------------------------------------
 export const GameState = {
@@ -385,14 +421,6 @@ function handleTouchMove(e) {
   )
     return;
 
-  if (
-    e.target.closest("#restart-btn") ||
-    e.target.closest("#math-btn") ||
-    e.target.closest("#home-btn")
-  ) {
-    return;
-  }
-
   e.preventDefault();
 
   for (let i = 0; i < e.changedTouches.length; i++) {
@@ -410,14 +438,6 @@ function handleTouchMove(e) {
 
 function handleTouchEnd(e) {
   if (!isGameActive) return;
-
-  if (
-    e.target.closest("#restart-btn") ||
-    e.target.closest("#math-btn") ||
-    e.target.closest("#home-btn")
-  ) {
-    return;
-  }
 
   e.preventDefault();
 
