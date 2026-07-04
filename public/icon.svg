@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="96 40 320 320">
+  <defs>
+    <filter id="glow-white-app" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Sfondo scuro per l'icona -->
+  <rect x="96" y="40" width="320" height="320" fill="#0d0e12" rx="60" />
+  
+  <rect x="176" y="80" width="160" height="240" rx="12" fill="none" stroke="#374151" stroke-width="4"/>
+  <circle cx="256" cy="200" r="18" fill="#ffffff" filter="url(#glow-white-app)"/>
+  <circle cx="256" cy="200" r="45" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.4"/>
+  <circle cx="256" cy="200" r="70" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.2"/>
+</svg>

@@ -1,4 +1,4 @@
-package com.screenuts.taproulette;
+package com.screenuts.turnzero;
 
 import com.getcapacitor.BridgeActivity;
 

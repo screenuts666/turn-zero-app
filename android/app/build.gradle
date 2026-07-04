@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.screenuts.taproulette"
+    namespace = "com.screenuts.turnzero"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.screenuts.taproulette"
+        applicationId "com.screenuts.turnzero"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

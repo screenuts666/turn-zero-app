@@ -450,6 +450,24 @@ export function initGame() {
   // Initialize settings module listeners
   initSettingsListeners();
 
+  // BIND LOGO INTERACTION (Event delegation)
+  const introContainer = document.querySelector(".intro-anim-container");
+  if (introContainer) {
+    addTapListener(introContainer, (e) => {
+      const logo = introContainer.querySelector(".intro-logo-svg");
+      if (logo && (e.target.closest(".intro-logo-svg") || e.target === logo)) {
+        triggerVibration(20);
+        // Only re-trigger the pulse animations (not the border drawing)
+        const dot = logo.querySelector(".intro-logo-dot");
+        const wave1 = logo.querySelector(".intro-logo-wave1");
+        const wave2 = logo.querySelector(".intro-logo-wave2");
+        if (dot) dot.parentNode.replaceChild(dot.cloneNode(true), dot);
+        if (wave1) wave1.parentNode.replaceChild(wave1.cloneNode(true), wave1);
+        if (wave2) wave2.parentNode.replaceChild(wave2.cloneNode(true), wave2);
+      }
+    });
+  }
+
   // BIND TOUCH GESTURE LISTENERS
   document.addEventListener("touchstart", handleTouchStart, { passive: false });
   document.addEventListener("touchmove", handleTouchMove, { passive: false });
