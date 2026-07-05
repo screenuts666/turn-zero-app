@@ -422,7 +422,11 @@ function handleTouchEnd(e) {
   }
 
   if (state === GameState.WAITING || state === GameState.COUNTDOWN) {
-    if (fingers.size < 2) resetGame();
+    if (fingers.size < 2) {
+      clearInterval(countdownInterval);
+      state = GameState.WAITING;
+      msg.innerText = "Place your fingers";
+    }
   }
   updateHomeButtonVisibility();
 }
@@ -474,6 +478,14 @@ export function initGame() {
   document.addEventListener("touchmove", handleTouchMove, { passive: false });
   document.addEventListener("touchend", handleTouchEnd, { passive: false });
   document.addEventListener("touchcancel", handleTouchEnd, { passive: false });
+
+  // PREVENT SYSTEM INTERRUPTIONS
+  document.addEventListener("contextmenu", (e) => e.preventDefault());
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && isGameActive) {
+      resetGame();
+    }
+  });
 
   // BIND UI BUTTONS
   addTapListener(startBtn, () => {

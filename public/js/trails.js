@@ -32,8 +32,15 @@ export function addTrail(id, x, y, color) {
 export function updateTrail(id, x, y) {
   const trail = activeTrails.get(id);
   if (trail) {
-    const lastPoint = trail.points[trail.points.length - 1];
     const now = Date.now();
+    
+    if (trail.points.length === 0) {
+      trail.points.push({ x, y, time: now });
+      triggerDrawingLoop();
+      return;
+    }
+
+    const lastPoint = trail.points[trail.points.length - 1];
     const dx = x - lastPoint.x;
     const dy = y - lastPoint.y;
     const dt = now - lastPoint.time;

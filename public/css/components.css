@@ -60,6 +60,7 @@
     background-color 0.2s;
   box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
   font-family: inherit;
+  margin-top: 30px; /* Spostato leggermente in basso come richiesto */
 }
 
 #start-btn:active {
@@ -249,7 +250,6 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  margin-top: -30px;
   transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
 
